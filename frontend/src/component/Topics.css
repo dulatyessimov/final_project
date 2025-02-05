@@ -1,0 +1,34 @@
+.topics-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .topics-list {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  .topic-item {
+    margin-bottom: 10px;
+  }
+  
+  .topic-link {
+    text-decoration: none;
+    color: #3498db;
+    font-size: 18px;
+  }
+  
+  .topic-link:hover {
+    text-decoration: underline;
+  }
+  
+  .error-message {
+    color: red;
+    font-size: 18px;
+  }
+  
+  h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+  }
+  

@@ -6,6 +6,8 @@ const topicSchema = new mongoose.Schema({
     type: String,
     required: true, // Ensures that every topic has a title
   },
+  content: { type: String, required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Reference to the user who created it
   votes: {
     type: Number,
     default: 0, // Default value of 0 for votes

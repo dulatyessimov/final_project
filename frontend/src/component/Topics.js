@@ -1,19 +1,37 @@
+// src/component/Topics.js
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import Cookies from 'js-cookie'; // Import js-cookie to handle cookies
+import { Link, useNavigate } from 'react-router-dom';
 import './Topics.css';
-import { getTopics, editTopic, deleteTopic } from '../api/getTopics'; // Assuming api.js is the file where the functions are
+import { getTopics, deleteTopic } from '../api/getTopics';
+import { getCurrentUser } from '../api/auth';
 
 const Topics = () => {
   const [topics, setTopics] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchTopics = async () => {
+    const fetchData = async () => {
       try {
-        const topicsData = await getTopics(); // Use the getTopics API function
-        setTopics(topicsData);
+        // First, get the current user
+        const user = await getCurrentUser();
+        setCurrentUser(user);
+
+        // Then, fetch all topics
+        const topicsData = await getTopics();
+
+        // Filter topics to only include those that belong to the current user.
+        const userTopics = topicsData.filter((topic) => {
+          // Check if topic.userId is an object (populated) or a string
+          if (typeof topic.userId === 'object' && topic.userId !== null) {
+            return topic.userId._id === user._id;
+          }
+          return topic.userId === user._id;
+        });
+
+        setTopics(userTopics);
         setLoading(false);
       } catch (err) {
         setError('Error fetching topics');
@@ -22,48 +40,31 @@ const Topics = () => {
       }
     };
 
-    fetchTopics();
+    fetchData();
   }, []);
 
   const handleDelete = async (topicId) => {
-
-
-      try {
-        await deleteTopic(topicId); // Use the deleteTopic API function
-        setTopics(topics.filter(topic => topic._id !== topicId));
-      } catch (error) {
-        setError('Error deleting topic');
-        console.error('Error deleting topic:', error);
-      }
-
-  };
-
-  const handleEdit = async (topicId, newTitle) => {
-
-
-      try {
-        await editTopic(topicId, newTitle); // Use the editTopic API function
-        const updatedTopics = topics.map(topic =>
-          topic._id === topicId ? { ...topic, title: newTitle } : topic
-        );
-        setTopics(updatedTopics);
-      } catch (error) {
-        setError('Error editing topic');
-        console.error('Error editing topic:', error);
-      }
-    
+    try {
+      await deleteTopic(topicId);
+      setTopics(topics.filter((topic) => topic._id !== topicId));
+    } catch (err) {
+      setError('Error deleting topic');
+      console.error('Error deleting topic:', err);
+    }
   };
 
   return (
     <div className="topics-container">
-      <h1>Topics</h1>
+      <h1>My Topics</h1>
       {loading && <p>Loading...</p>}
       {error && <p className="error-message">{error}</p>}
       <ul className="topics-list">
-        {topics.map(topic => (
+        {topics.map((topic) => (
           <li key={topic._id} className="topic-item">
-            <Link to={`/topics/${topic._id}`} className="topic-link">{topic.title}</Link>
-            <button onClick={() => handleEdit(topic._id, prompt('Edit title:', topic.title))}>
+            <Link to={`/topics/${topic._id}`} className="topic-link">
+              {topic.title}
+            </Link>
+            <button onClick={() => navigate(`/edit-topic/${topic._id}`)}>
               Edit
             </button>
             <button onClick={() => handleDelete(topic._id)}>

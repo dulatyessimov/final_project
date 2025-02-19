@@ -1,14 +1,10 @@
 {
   "name": "my-project",
   "version": "1.0.0",
-  "homepage": "https://dulatyessimov.github.io/discussion_forum",
+  "homepage": "https://dulatyessimov.github.io/final_project",
   "scripts": {
-    "start": "concurrently \"npm run start --prefix backend\" \"npm run start --prefix frontend\"",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "predeploy": "npm run build --prefix frontend",
-    "deploy": "gh-pages -d frontend/build"
+    "start": "concurrently \"npm run start --prefix backend\" \"npm run start --prefix frontend\""
+
   },
   "devDependencies": {
     "concurrently": "^9.1.0",

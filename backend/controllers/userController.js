@@ -14,10 +14,12 @@ const registerUser = async (req, res) => {
     }
 
     // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // const hashedPassword = await bcrypt.hash(password, 10);
+    // console.log("Hashed Password Before Saving:", hashedPassword);
 
     // Create and save new user
-    const newUser = new User({ username, email, password: hashedPassword });
+    //    const newUser = new User({ username, email, password: hashedPassword });
+    const newUser = new User({ username, email, password });
     await newUser.save();
 
     res.status(201).json({ message: 'User registered successfully' });
@@ -38,11 +40,15 @@ const loginUser = async (req, res) => {
   try {
     // Find user by email
     const user = await User.findOne({ email });
-    if (!user) return res.status(401).json({ error: 'Invalid credentials' });
+    if (!user) return res.status(401).json({ error: 'Invalid credentials(not found user)(userController)' });
+
+    console.log("Stored hash:", user?.password);
+    console.log("Entered password:", password);
+
 
     // Verify password
     if (!(await bcrypt.compare(password, user.password))) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Invalid credentials(wrong password)(userController)' });
     }
 
     // Invalidate previous sessions
@@ -73,7 +79,7 @@ const loginUser = async (req, res) => {
     res.json({ message: 'Login successful' });
   } catch (err) {
     console.log('Error during login:', err.message);
-    res.status(500).json({ error: 'Error logging in', details: err.message });
+    res.status(500).json({ error: 'Error logging in(userController)', details: err.message });
   }
 };
 
@@ -92,7 +98,7 @@ const logoutUser = async (req, res) => {
     console.log('Token cookie cleared');  // Debugging cookie clearing
     res.json({ message: 'Logged out successfully' });
   } catch (err) {
-    res.status(500).json({ error: 'Error logging out', details: err.message });
+    res.status(500).json({ error: 'Error logging out(userController)', details: err.message });
   }
 };
 
@@ -102,7 +108,7 @@ const getCurrentUser = async (req, res) => {
     const user = await User.findById(req.user._id).select('-password');
     res.json(user);
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching user' });
+    res.status(500).json({ error: 'Error fetching user(userController)' });
   }
 };
 
@@ -110,8 +116,8 @@ const getCurrentUser = async (req, res) => {
 const authenticateUser = async (req, res, next) => {
   const token = req.cookies.token;
   if (!token) { 
-    console.log('❌ No token found in cookies');
-    res.status(401).json({ error: 'Authentication required' });
+    console.log(' No token found in cookies(userController)');
+    res.status(401).json({ error: 'Authentication required(userController)' });
   }
 
   try {
@@ -121,14 +127,14 @@ const authenticateUser = async (req, res, next) => {
     // Check if session is active
     const session = await Session.findOne({ userId: req.user._id, token, isActive: true });
     if (!session) { 
-      console.log('❌ Session expired. Please log in again.');
-      res.status(401).json({ error: 'Session expired. Please log in again.' });
+      console.log('❌ Session expired. Please log in again.(userController)');
+      res.status(401).json({ error: 'Session expired. Please log in again.(userController)' });
     }
 
     next();
   } catch (err) {
-    console.log('❌ Invalid or expired token:', err.message);
-    res.status(401).json({ error: 'Invalid or expired token' });
+    console.log('❌ Invalid or expired token:(userController)', err.message);
+    res.status(401).json({ error: 'Invalid or expired token(userController)' });
   }
 };
 

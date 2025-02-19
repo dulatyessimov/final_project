@@ -1,5 +1,7 @@
+// src/component/Home.js
 import React, { useState, useEffect } from 'react';
-import { getTopics } from '../api/getTopics';  // Import the getTopics function
+import { getTopics } from '../api/getTopics';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
   const [topics, setTopics] = useState([]);
@@ -9,25 +11,27 @@ const Home = () => {
   useEffect(() => {
     const fetchTopics = async () => {
       try {
-        const data = await getTopics();  // Use the getTopics function
-        setTopics(data);  // Set the topics data from the response
-        setLoading(false);  // Stop loading
-      } catch (error) {
-        setError('Error fetching topics');  // Error if the request fails
-        setLoading(false);  // Stop loading
+        const data = await getTopics();
+        setTopics(data);
+      } catch (err) {
+        setError('Error fetching topics');
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchTopics();  // Call fetchTopics to fetch the data when the component mounts
-  }, []);  // Empty dependency array so it only runs once on mount
+    fetchTopics();
+  }, []);
 
   return (
     <div>
-      {loading && <p>Loading...</p>}
+      {loading && <p>Loading topics...</p>}
       {error && <p>{error}</p>}
       <ul>
         {topics.map((topic) => (
-          <li key={topic.id}>{topic.title}</li>  // Render each topic
+          <li key={topic._id}>
+            <Link to={`/topics/${topic._id}`}>{topic.title}</Link>
+          </li>
         ))}
       </ul>
     </div>

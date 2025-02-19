@@ -9,6 +9,7 @@ const morgan = require('morgan');
 // Import Routes
 const authRoutes = require('./routes/authRoutes');
 const topicsRoutes = require('./routes/topicsRoutes');
+const commentsRouter = require('./routes/commentsRoutes');
 
 // Import Middleware
 const protectRoute = require('./middleware/protectRoute');
@@ -20,7 +21,8 @@ app.use(morgan('dev'));  // Logs incoming requests to the console
 // Middleware setup
 
 const corsOptions = {
-  origin: 'http://localhost:3000', // Replace with your frontend's domain
+//    origin: 'https://backend-db821.web.app', // Replace with your frontend's domain
+  origin: ['http://localhost:3000', 'https://localhost:3000','http://backend-db821.web.app','https://backend-db821.web.app'], // Replace with your frontend's domain
   credentials: true,  // Allow cookies to be sent and received
 };
 
@@ -69,6 +71,13 @@ app.use((req, res, next) => {
 
 // Topic Routes (Protected)
 app.use('/api/topics', protectRoute, topicsRoutes);  // Protect topic routes with the middleware
+
+
+app.use('/api/comments',protectRoute,  commentsRouter);
+const votesRouter = require('./routes/votesRoutes');
+app.use('/api/votes', votesRouter);
+
+
 
 // Global Error Handler (for unhandled errors)
 app.use((err, req, res, next) => {

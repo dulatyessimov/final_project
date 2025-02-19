@@ -1,11 +1,24 @@
-import React, { useState } from 'react';
-import { login, register } from '../api/auth';
-import Cookies from 'js-cookie';
+import React, { useState, useEffect } from "react";
+import { login, register, getCurrentUser } from "../api/auth";
 
-const Auth = ({ isLogin, onAuthSuccess }) => {
-  const [formData, setFormData] = useState({ email: '', password: '', username: '' });
-  const [error, setError] = useState('');
-  const [message, setMessage] = useState('');
+const Auth = ({ isLogin: initialIsLogin, onAuthSuccess }) => {
+  const [formData, setFormData] = useState({ email: "", password: "", username: "" });
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const [isLogin, setIsLogin] = useState(initialIsLogin);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userData = await getCurrentUser();
+        setUser(userData);
+      } catch (error) {
+        console.log("No user logged in");
+      }
+    };
+    fetchUser();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -13,47 +26,28 @@ const Auth = ({ isLogin, onAuthSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setMessage('');
-  
-    try {
-      let response;
-      if (isLogin) {
-        response = await login(formData.email, formData.password);
-      } else {
-        response = await register(formData.username, formData.email, formData.password);
-      }
-  
-      // Ensure response is valid before accessing properties
-      if (!response || !response.message) {
-        throw new Error('Invalid response from server');
-      }
-  
-      // Check if login was successful
-      console.log("Server response:", response.message);
+    setError("");
+    setMessage("");
 
-       // Set the token in the cookies with the necessary options
-       Cookies.set('token', response.token, { expires: 1, path: '/', SameSite: 'None', secure: true });
-      
-      // Display success message
-      setMessage(isLogin ? 'Login successful!' : 'Registration successful! Please log in.');
-  
-      // Proceed if login is successful
+    try {
       if (isLogin) {
-        onAuthSuccess();  // Trigger callback to update UI or route
+        await login(formData.email, formData.password);
+      } else {
+        await register(formData.username, formData.email, formData.password);
+        setMessage("Registration successful! Please log in.");
+        return;
       }
     } catch (err) {
-      console.log('Error object:', err);
-      setError(err.message || 'An error occurred');
+      setError("An error occurred. Please try again.");
     }
   };
-  
+
   return (
     <div>
-      <h1>{isLogin ? 'Login' : 'Sign Up'}</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {message && <p style={{ color: 'green' }}>{message}</p>}
-
+      <h1>{isLogin ? "Login" : "Sign Up"}</h1>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {message && <p style={{ color: "green" }}>{message}</p>}
+      
       <form onSubmit={handleSubmit}>
         {!isLogin && (
           <input
@@ -81,11 +75,11 @@ const Auth = ({ isLogin, onAuthSuccess }) => {
           onChange={handleChange}
           required
         />
-        <button type="submit">{isLogin ? 'Login' : 'Sign Up'}</button>
+        <button type="submit">{isLogin ? "Login" : "Sign Up"}</button>
       </form>
-
-      <p onClick={() => onAuthSuccess()}>
-        {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Log in'}
+      
+      <p onClick={() => setIsLogin(!isLogin)}>
+        {isLogin ? "Don't have an account? Sign up" : "Already have an account? Log in"}
       </p>
     </div>
   );

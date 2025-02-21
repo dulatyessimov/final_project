@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 const voteSchema = new mongoose.Schema(
   {
-    topicId: {
+    productId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Topic",
       required: true,

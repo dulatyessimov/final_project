@@ -8,7 +8,6 @@ const morgan = require('morgan');
 
 // Import Routes
 const authRoutes = require('./routes/authRoutes');
-const topicsRoutes = require('./routes/topicsRoutes');
 const commentsRouter = require('./routes/commentsRoutes');
 
 // Import Middleware
@@ -69,13 +68,22 @@ app.use((req, res, next) => {
   next();  // Proceed to the next middleware
 });
 
-// Topic Routes (Protected)
-app.use('/api/topics', protectRoute, topicsRoutes);  // Protect topic routes with the middleware
 
 
 app.use('/api/comments',protectRoute,  commentsRouter);
 const votesRouter = require('./routes/votesRoutes');
 app.use('/api/votes', votesRouter);
+
+const productsRouter = require('./routes/productsRoutes');
+app.use('/api/products', productsRouter);
+const cartRouter = require('./routes/cartRoutes');
+app.use('/api/cart', cartRouter);
+const orderRouter = require('./routes/ordersRoutes');
+app.use('/api/orders', orderRouter);
+
+const analyticsRoutes = require('./routes/analyticsRoutes');
+app.use('/api/analytics', analyticsRoutes);
+
 
 
 

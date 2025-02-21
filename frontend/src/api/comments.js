@@ -3,10 +3,10 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api/comments';
 
-// Get all comments for a topic
-export const getCommentsByTopic = async (topicId) => {
+// Get all comments for a Product
+export const getCommentsByProduct = async (productId) => {
   try {
-    const response = await axios.get(`${API_URL}/topic/${topicId}`);
+    const response = await axios.get(`${API_URL}/product/${productId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching comments:', error);
@@ -14,11 +14,11 @@ export const getCommentsByTopic = async (topicId) => {
   }
 };
 
-// Add a new comment to a topic
-export const addComment = async (topicId, commentText) => {
+// Add a new comment to a Product
+export const addComment = async (productId, commentText) => {
   try {
     const response = await axios.post(
-      `${API_URL}/topic/${topicId}/add`,
+      `${API_URL}/product/${productId}/add`,
       { commentText },
       { withCredentials: true }
     );

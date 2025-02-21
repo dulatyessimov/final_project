@@ -1,16 +1,16 @@
 // routes/votes.js
 const express = require('express');
 const router = express.Router();
-const { getVotesByTopic, upvoteTopic, downvoteTopic } = require('../controllers/votesController');
+const { getVotesByProduct, upvoteProduct, downvoteProduct } = require('../controllers/votesController');
 const protectRoute = require('../middleware/protectRoute');
 
-// Get vote count for a topic
-router.get('/topic/:topicId', getVotesByTopic);
+// Get vote count for a product
+router.get('/product/:productId', getVotesByProduct);
 
-// Upvote a topic (protected)
-router.post('/topic/:topicId/upvote', protectRoute, upvoteTopic);
+// Upvote a product (protected)
+router.post('/product/:productId/upvote', protectRoute, upvoteProduct);
 
-// Downvote (remove vote) from a topic (protected)
-router.delete('/topic/:topicId/downvote', protectRoute, downvoteTopic);
+// Downvote (remove vote) from a product (protected)
+router.delete('/product/:productId/downvote', protectRoute, downvoteProduct);
 
 module.exports = router;

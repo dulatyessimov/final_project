@@ -1,5 +1,6 @@
 const express = require('express');
 const { registerUser, loginUser, logoutUser, getCurrentUser } = require('../controllers/userController');
+const { addTopic } = require('../controllers/topicController');
 const protectRoute = require('../middleware/protectRoute'); // Middleware for protected routes
 
 const router = express.Router();

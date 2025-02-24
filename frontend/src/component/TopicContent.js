@@ -1,8 +1,5 @@
-// src/component/TopicContent.js
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-
-// Import API helper functions
 import { getTopicById } from '../api/getTopics';
 import {
   getCommentsByTopic,
@@ -25,40 +22,30 @@ const TopicContent = () => {
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editingCommentText, setEditingCommentText] = useState('');
 
-  // Fetch topic details
   useEffect(() => {
     getTopicById(id)
       .then((data) => setTopic(data))
       .catch((error) => console.error('Error fetching topic:', error));
   }, [id]);
 
-  // Fetch votes count for the topic
   useEffect(() => {
     getVotesByTopic(id)
       .then((data) => setVotesCount(data.votes))
       .catch((error) => console.error('Error fetching votes:', error));
   }, [id]);
 
-  // OPTIONAL: Fetch whether the current user has already voted.
-  // You might implement a similar API helper function (e.g., getUserVoteStatus) if needed.
-  // For now, we'll assume that if the user has voted, the backend would have returned that info in the topic data.
-  // Alternatively, you can store vote status locally when the user upvotes/downvotes.
-
-  // Fetch comments for this topic
   useEffect(() => {
     getCommentsByTopic(id)
       .then((data) => setComments(data))
       .catch((error) => console.error('Error fetching comments:', error));
   }, [id]);
 
-  // Fetch current user info
   useEffect(() => {
     getCurrentUser()
       .then((user) => setCurrentUser(user))
       .catch((error) => console.error('Error fetching current user:', error));
   }, []);
 
-  // Toggle vote: upvote if not voted yet; cancel vote if already voted
   const handleVoteToggle = () => {
     if (hasVoted) {
       downvoteTopic(id)
@@ -77,7 +64,6 @@ const TopicContent = () => {
     }
   };
 
-  // Add a new comment
   const handleAddComment = (e) => {
     e.preventDefault();
     addComment(id, newCommentText)
@@ -88,7 +74,6 @@ const TopicContent = () => {
       .catch((error) => console.error('Error adding comment:', error));
   };
 
-  // Delete a comment
   const handleDeleteComment = (commentId) => {
     deleteComment(commentId)
       .then(() => {
@@ -97,13 +82,11 @@ const TopicContent = () => {
       .catch((error) => console.error('Error deleting comment:', error));
   };
 
-  // Begin editing a comment
   const startEditingComment = (comment) => {
     setEditingCommentId(comment._id);
     setEditingCommentText(comment.text);
   };
 
-  // Submit edited comment
   const handleEditComment = (e) => {
     e.preventDefault();
     editComment(editingCommentId, editingCommentText)
@@ -122,8 +105,11 @@ const TopicContent = () => {
   if (!topic) return <div>Loading...</div>;
 
   return (
-    <div>
+    <div className="topic-content">
       <h1>{topic.title}</h1>
+      <p className="creator">
+        Created by: {topic.userId?.username || 'Unknown'}
+      </p>
       <p>{topic.content}</p>
       <p>Votes: {votesCount}</p>
       <button onClick={handleVoteToggle}>
@@ -131,9 +117,8 @@ const TopicContent = () => {
       </button>
 
       <h3>Comments:</h3>
-      <ul>
+      <ul className="comments">
         {comments.map((comment) => {
-          // Determine the comment’s user ID (handle both populated and unpopulated cases)
           const commentUserId =
             comment.userId && (comment.userId._id || comment.userId);
           const currentUserId = currentUser && currentUser._id;
@@ -160,18 +145,17 @@ const TopicContent = () => {
                 </form>
               ) : (
                 <>
-                  {comment.text}
-                  {currentUser &&
-                    commentUserId === currentUserId && (
-                      <>
-                        <button onClick={() => startEditingComment(comment)}>
-                          Edit
-                        </button>
-                        <button onClick={() => handleDeleteComment(comment._id)}>
-                          Delete
-                        </button>
-                      </>
-                    )}
+                  <span>{comment.text}</span>
+                  {currentUser && commentUserId === currentUserId && (
+                    <>
+                      <button onClick={() => startEditingComment(comment)}>
+                        Edit
+                      </button>
+                      <button onClick={() => handleDeleteComment(comment._id)}>
+                        Delete
+                      </button>
+                    </>
+                  )}
                 </>
               )}
             </li>

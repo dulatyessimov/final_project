@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { getCurrentUser } from '../api/auth'; // Your existing API call
+import { getCurrentUser } from '../api/auth';
 import { auth, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink } from '../firebaseConfig';
 
 const actionCodeSettings = {
-      url: 'https://backend-db821.web.app/verify-email', // Redirect after verification
-//    url: 'https://localhost:3000/verify-email', // Redirect after verification
+  url: 'https://backend-db821.web.app/verify-email',
   handleCodeInApp: true,
 };
 
@@ -28,7 +27,7 @@ const VerifyEmail = () => {
   const sendVerificationEmail = async () => {
     try {
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-      localStorage.setItem('emailForSignIn', email); // Store email for later verification
+      localStorage.setItem('emailForSignIn', email);
       setMessage("Verification email sent! Check your inbox.");
     } catch (error) {
       setMessage(error.message);
@@ -38,12 +37,10 @@ const VerifyEmail = () => {
   const checkEmailVerification = async () => {
     if (isSignInWithEmailLink(auth, window.location.href)) {
       let storedEmail = localStorage.getItem('emailForSignIn');
-
       if (!storedEmail) {
         setMessage("Email not found. Please enter your email again.");
         return;
       }
-
       try {
         await signInWithEmailLink(auth, storedEmail, window.location.href);
         localStorage.removeItem('emailForSignIn');
@@ -59,10 +56,12 @@ const VerifyEmail = () => {
   }, []);
 
   return (
-    <div>
+    <div className="container">
       <h2>Verify Your Email</h2>
       <p>Email: {email}</p>
-      <button onClick={sendVerificationEmail} disabled={!email}>Send Verification Email</button>
+      <button onClick={sendVerificationEmail} disabled={!email}>
+        Send Verification Email
+      </button>
       <p>{message}</p>
     </div>
   );

@@ -32,6 +32,7 @@ const Auth = ({ isLogin: initialIsLogin, onAuthSuccess }) => {
     try {
       if (isLogin) {
         await login(formData.email, formData.password);
+        onAuthSuccess();
       } else {
         await register(formData.username, formData.email, formData.password);
         setMessage("Registration successful! Please log in.");
@@ -43,44 +44,46 @@ const Auth = ({ isLogin: initialIsLogin, onAuthSuccess }) => {
   };
 
   return (
-    <div>
-      <h1>{isLogin ? "Login" : "Sign Up"}</h1>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {message && <p style={{ color: "green" }}>{message}</p>}
-      
-      <form onSubmit={handleSubmit}>
-        {!isLogin && (
+    <div className="container">
+      <div className="auth-form">
+        <h1>{isLogin ? "Login" : "Sign Up"}</h1>
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {message && <p style={{ color: "green" }}>{message}</p>}
+        
+        <form onSubmit={handleSubmit}>
+          {!isLogin && (
+            <input
+              type="text"
+              name="username"
+              placeholder="Username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+            />
+          )}
           <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            value={formData.username}
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
             onChange={handleChange}
             required
           />
-        )}
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-        <button type="submit">{isLogin ? "Login" : "Sign Up"}</button>
-      </form>
-      
-      <p onClick={() => setIsLogin(!isLogin)}>
-        {isLogin ? "Don't have an account? Sign up" : "Already have an account? Log in"}
-      </p>
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+          <button type="submit">{isLogin ? "Login" : "Sign Up"}</button>
+        </form>
+        
+        <p onClick={() => setIsLogin(!isLogin)}>
+          {isLogin ? "Don't have an account? Sign up" : "Already have an account? Log in"}
+        </p>
+      </div>
     </div>
   );
 };

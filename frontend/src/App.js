@@ -1,32 +1,27 @@
-// src/App.js
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes, Navigate, Link } from 'react-router-dom';
-import Products from './component/Products';
-import Home from './component/Home';                  // Home lists products (name and price)
-import AddProduct from './component/AddProduct';       // Form to add a new product
-import ProductContent from './component/ProductContent';// Detailed product view with comments, votes, & "Buy Now"
-import ShoppingCart from './component/ShoppingCart';   // Shopping cart page
-import OrdersPage from './component/OrdersPage';       // Orders page for Processing/Completed orders
-import Auth from './component/Auth';                   // Login/Signup component
-import VerifyEmail from './component/VerifyEmail';     // Email verification screen
-import AnalyticsDashboard from './component/AnalyticsDashboard'; // Admin analytics dashboard
+import Home from './component/Home';
+import Topics from './component/Topics';
+import TopicContent from './component/TopicContent';
+import AddTopic from './component/AddTopic';
+import EditTopic from './component/EditTopic';
+import Auth from './component/Auth';
+import VerifyEmail from './component/VerifyEmail';
 import { logout, getCurrentUser } from './api/auth';
+import './App.css'; // Import the new global styles
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
-  const [isEmailVerified, setIsEmailVerified] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [loading, setLoading] = useState(true); // Prevent flickering on page load
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const verifyUser = async () => {
       try {
         const user = await getCurrentUser();
         setIsAuthenticated(!!user);
-        setIsEmailVerified(user?.emailVerified || true);
-        // Assume the user object has a 'role' property.
-        setIsAdmin(user?.role === 'admin');
-        console.log("Auth State:", { isAuthenticated, isEmailVerified, isAdmin: user?.role === 'admin' });
+        setIsEmailVerified(user?.emailVerified || false);
+        console.log("Auth State:", { isAuthenticated, isEmailVerified });
       } catch (error) {
         setIsAuthenticated(false);
         setIsEmailVerified(false);
@@ -42,10 +37,9 @@ const App = () => {
     const user = await getCurrentUser();
     setIsAuthenticated(true);
     setIsEmailVerified(user.emailVerified);
-    setIsAdmin(user?.role === 'admin');
   };
 
-  if (loading) return <p>Loading...</p>; // Prevent unnecessary redirects while checking auth state
+  if (loading) return <p>Loading...</p>;
 
   return (
     <BrowserRouter>
@@ -55,12 +49,8 @@ const App = () => {
             {isEmailVerified ? (
               <>
                 <Link to="/home">Home</Link>
-                <Link to="/products">Products</Link>
-                <Link to="/add-product">Add Products</Link>
-                <Link to="/cart">Cart</Link>
-                <Link to="/orders">Orders</Link>
-                {/* Show the Admin Dashboard link only if the user is an admin */}
-                {isAdmin && <Link to="/admin">Admin Dashboard</Link>}
+                <Link to="/topics">Topics</Link>
+                <Link to="/add-topic">Add Topic</Link>
               </>
             ) : (
               <Link to="/verify-email">Verify Email</Link>
@@ -72,40 +62,32 @@ const App = () => {
         )}
       </nav>
 
-      <Routes>
-        {/* Auth Routes */}
-        <Route 
-          path="/login" 
-          element={
-            !isAuthenticated 
-              ? <Auth isLogin={true} onAuthSuccess={handleAuthSuccess} /> 
-              : <Navigate to={isEmailVerified ? "/home" : "/verify-email"} />
-          } 
-        />
-        <Route 
-          path="/signup" 
-          element={
-            !isAuthenticated 
-              ? <Auth isLogin={false} onAuthSuccess={handleAuthSuccess} /> 
-              : <Navigate to={isEmailVerified ? "/home" : "/verify-email"} />
-          } 
-        />
+      <div className="container">
+        <Routes>
+          {/* Auth Routes */}
+          <Route 
+            path="/login" 
+            element={!isAuthenticated ? <Auth isLogin={true} onAuthSuccess={handleAuthSuccess} /> : <Navigate to={isEmailVerified ? "/home" : "/verify-email"} />} 
+          />
+          <Route 
+            path="/signup" 
+            element={!isAuthenticated ? <Auth isLogin={false} onAuthSuccess={handleAuthSuccess} /> : <Navigate to={isEmailVerified ? "/home" : "/verify-email"} />} 
+          />
 
-        {/* Protected Routes (Only for Authenticated & Verified Users) */}
-        <Route path="/home" element={isAuthenticated && isEmailVerified ? <Home /> : <Navigate to="/verify-email" />} />
-        <Route path="/products" element={isAuthenticated && isEmailVerified ? <Home /> : <Navigate to="/verify-email" />} />
-        <Route path="/product/:id" element={isAuthenticated && isEmailVerified ? <ProductContent /> : <Navigate to="/verify-email" />} />
-        <Route path="/cart" element={isAuthenticated && isEmailVerified ? <ShoppingCart /> : <Navigate to="/verify-email" />} />
-        <Route path="/add-product" element={isAuthenticated && isEmailVerified ? <AddProduct /> : <Navigate to="/verify-email" />} />
-        <Route path="/orders" element={isAuthenticated && isEmailVerified ? <OrdersPage /> : <Navigate to="/verify-email" />} />
-        <Route path="/verify-email" element={isAuthenticated && !isEmailVerified ? <VerifyEmail /> : <Navigate to="/home" />} />
+          {/* Protected Routes */}
+          <Route path="/home" element={isAuthenticated && isEmailVerified ? <Home /> : <Navigate to="/verify-email" />} />
+          <Route path="/topics" element={isAuthenticated && isEmailVerified ? <Topics /> : <Navigate to="/verify-email" />} />
+          <Route path="/topics/:id" element={isAuthenticated && isEmailVerified ? <TopicContent /> : <Navigate to="/verify-email" />} />
+          <Route path="/add-topic" element={isAuthenticated && isEmailVerified ? <AddTopic /> : <Navigate to="/verify-email" />} />
+          <Route path="/edit-topic/:id" element={isAuthenticated && isEmailVerified ? <EditTopic /> : <Navigate to="/verify-email" />} />
 
-        {/* Admin Analytics Dashboard Route */}
-        <Route path="/admin" element={isAuthenticated && isEmailVerified && isAdmin ? <AnalyticsDashboard /> : <Navigate to="/home" />} />
+          {/* Email Verification Route */}
+          <Route path="/verify-email" element={isAuthenticated && !isEmailVerified ? <VerifyEmail /> : <Navigate to="/home" />} />
 
-        {/* Catch-all Redirect */}
-        <Route path="*" element={<Navigate to={isAuthenticated ? (isEmailVerified ? "/home" : "/verify-email") : "/login"} />} />
-      </Routes>
+          {/* Catch-all Redirect */}
+          <Route path="*" element={<Navigate to={isAuthenticated ? (isEmailVerified ? "/home" : "/verify-email") : "/login"} />} />
+        </Routes>
+      </div>
     </BrowserRouter>
   );
 };

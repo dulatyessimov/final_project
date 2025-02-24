@@ -36,3 +36,173 @@
     transform: rotate(360deg);
   }
 }
+
+/* Global Styles */
+body {
+  background-color: #f6f7f8;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #1c1c1c;
+  margin: 0;
+  padding: 0;
+}
+
+/* Navigation Bar */
+nav {
+  background-color: #ffffff;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+}
+
+nav a {
+  margin-right: 15px;
+  text-decoration: none;
+  color: #0079d3;
+  font-weight: bold;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+nav button {
+  background-color: transparent;
+  border: none;
+  color: #0079d3;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Container for main content */
+.container {
+  max-width: 960px;
+  margin: 20px auto;
+  padding: 0 15px;
+}
+
+/* Primary Button Styles */
+button,
+.submit-button {
+  background-color: #0079d3;
+  border: none;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover,
+.submit-button:hover {
+  background-color: #005999;
+}
+
+/* Form Elements */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+/* Topics List (e.g., in Home & Topics components) */
+.topics-container,
+.topic-content,
+.add-topic-container {
+  background-color: #ffffff;
+  border: 1px solid #e1e1e1;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.topics-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.topics-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #e1e1e1;
+}
+
+.topics-list li:last-child {
+  border-bottom: none;
+}
+
+.topic-link {
+  color: #0079d3;
+  font-size: 18px;
+  text-decoration: none;
+}
+
+.topic-link:hover {
+  text-decoration: underline;
+}
+
+/* Topic Content Styles */
+.topic-content h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.topic-content p {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Comments Section */
+.comments {
+  list-style: none;
+  padding: 0;
+}
+
+.comments li {
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.comments li form,
+.comments li span {
+  flex-grow: 1;
+}
+
+.comments li button {
+  background-color: transparent;
+  border: none;
+  color: #0079d3;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+/* Vote Button Styles */
+.upvote-button,
+.downvote-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.upvote-button {
+  color: #ff4500;
+}
+
+.downvote-button {
+  color: #7193ff;
+}

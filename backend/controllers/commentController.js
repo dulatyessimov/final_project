@@ -1,33 +1,33 @@
 // controllers/commentsController.js
 const Comment = require('../models/Comment');
-const Product = require('../models/Product');
+const Topic = require('../models/Topic');
 
-// Get all comments for a specific product
-exports.getCommentsByProduct = async (req, res) => {
+// Get all comments for a specific topic
+exports.getCommentsByTopic = async (req, res) => {
   try {
-    const { productId } = req.params;
-    const comments = await Comment.find({ productId }).populate("userId", "username");
+    const { topicId } = req.params;
+    const comments = await Comment.find({ topicId }).populate("userId", "username");
     res.json(comments);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-// Add a new comment to a product
+// Add a new comment to a topic
 exports.addComment = async (req, res) => {
   try {
-    const { productId } = req.params;
+    const { topicId } = req.params;
     const { commentText } = req.body;
     const userId = req.user._id; // Assumes authentication middleware sets req.user
 
-    // Optionally, verify the product exists
-    const product = await Product.findById(productId);
-    if (!product) {
-      return res.status(404).json({ error: "product not found" });
+    // Optionally, verify the topic exists
+    const topic = await Topic.findById(topicId);
+    if (!topic) {
+      return res.status(404).json({ error: "Topic not found" });
     }
 
     const newComment = new Comment({
-      productId,
+      topicId,
       userId,
       text: commentText,
     });
